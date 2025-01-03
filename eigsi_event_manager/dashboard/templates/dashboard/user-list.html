@@ -1,0 +1,131 @@
+{% extends 'dashboard/base.html' %} 
+{% block title %}Liste des Utilisateurs{% endblock %} 
+{% block content %}
+<div class="flex justify-center items-start flex-col lg:flex-row min-h-screen bg-gray-100 overflow-hidden">
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-shrink p-4 lg:p-6 overflow-y-auto max-w-full lg:max-w-[calc(100%-4rem)]">
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+
+            <!-- Search Bar -->
+            <div class="p-4">
+                <form method="GET" action="{% url 'dashboard:user-list' %}" class="flex flex-col lg:flex-row items-center">
+                    <input type="text" name="search" placeholder="Rechercher un utilisateur" class="border border-gray-300 rounded p-2 w-full lg:w-1/2" value="{{ request.GET.search }}">
+                    <button type="submit" class="mt-2 lg:mt-0 lg:ml-2 bg-gray-900 text-white px-4 py-2 rounded">Recherche</button>
+                </form>
+                
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="block lg:hidden">
+                {% for user in users %}
+                <div class="border-b border-gray-200 p-4 flex flex-col">
+                    <div class="flex items-center">
+                        {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="Photo de {{ user.nom|default:user.username }}" class="w-12 h-12 rounded-full mr-4"> 
+                        {% endif %}
+                        <div class="flex-grow">
+                            <h2 class="text-lg font-bold">{{ user.nom|default:user.first_name }} {{ user.prenom|default:user.last_name }}</h2>
+                            <p class="text-gray-600">{{ user.username }}</p>
+                            <p class="text-gray-500">{{ user.adresse_email|default:user.email }}</p>
+                            <p class="text-gray-500">{{ user.numero_telephone|default:'N/A' }}</p>
+                            <span class="{% if user.is_active %}text-green-600{% else %}text-red-600{% endif %}">
+                                {{ user.is_active|yesno:"Actif,Inactif" }}
+                            </span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="#" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="py-2 px-4 text-center">Aucun utilisateur trouvé.</div>
+                {% endfor %}
+            </div>
+
+            <!-- Desktop Table View -->
+            <table class="hidden lg:min-w-full lg:table-auto bg-white border border-gray-200 text-left text-sm lg:text-base lg:block">
+                <thead>
+                    <tr class="bg-gray-900 text-gray-100">
+                        <th class="py-2 px-2 md:px-4">Photo</th>
+                        <th class="py-2 px-2 md:px-4">Prénom</th>
+                        <th class="py-2 px-2 md:px-4">Nom</th>
+                        <th class="py-2 px-2 md:px-4">Utilisateur</th>
+                        <th class="py-2 px-2 md:px-4 hidden lg:table-cell">Email</th>
+                        <th class="py-2 px-2 md:px-4 hidden lg:table-cell">Téléphone</th>
+                        <th class="py-2 px-2 md:px-4 hidden lg:table-cell">Rôle</th>
+                        <th class="py-2 px-2 md:px-4">Statut</th>
+                        <th class="py-2 px-2 md:px-4 hidden lg:table-cell">Permissions</th>
+                        <th class="py-2 px-2 md:px-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="border-b hover:bg-gray-100 transition duration-200 ease-in-out">
+                        <td class="py-2 px-2 md:px-4">
+                            {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Photo de {{ user.username }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full"> 
+                            {% endif %}
+                        </td>
+                        <td class="py-2 px-2 md:px-4">{{ user.nom|default:user.first_name }}</td>
+                        <td class="py-2 px-2 md:px-4">{{ user.prenom|default:user.last_name }}</td>
+                        <td class="py-2 px-2 md:px-4">{{ user.username }}</td>
+                        <td class="py-2 px-2 md:px-4 hidden lg:table-cell">{{ user.adresse_email|default:user.email }}</td>
+                        <td class="py-2 px-2 md:px-4 hidden lg:table-cell">{{ user.numero_telephone|default:'N/A' }}</td>
+                        <td class="py-2 px-2 md:px-4 hidden lg:table-cell">{{ user.role }}</td>
+                        <td class="py-2 px-2 md:px-4">
+                            <span class="{% if user.is_active %}text-green-600{% else %}text-red-600{% endif %}">
+                                {{ user.is_active|yesno:"Actif,Inactif" }}
+                            </span>
+                        </td>
+                        <td class="py-2 px-2 md:px-4 hidden lg:table-cell">
+                            <span class="inline-block bg-gray-200 text-xs md:text-sm px-2 py-1 rounded">{{ perm.name }}</span>
+                        </td>
+                        <td class="py-2 px-2 md:px-4 flex space-x-2">
+                            <a href="#" class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="10" class="py-2 px-4 text-center">Aucun utilisateur trouvé.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="p-4">
+                <div class="flex flex-col lg:flex-row justify-between items-center">
+                    <div class="flex space-x-2 mb-2 lg:mb-0">
+                        {% if users.has_previous %}
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200" onclick="window.location.href='?page=1&search={{ request.GET.search }}'">Première</button>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200" onclick="window.location.href='?page={{ users.previous_page_number }}&search={{ request.GET.search }}'">Précédente</button>
+                        {% else %}
+                        <span class="bg-gray-300 text-gray-600 px-4 py-2 rounded">Première</span>
+                        <span class="bg-gray-300 text-gray-600 px-4 py-2 rounded">Précédente</span> 
+                        {% endif %}
+                    </div>
+                    <div class="text-center mb-2 lg:mb-0">
+                        <span class="text-gray-600">Page {{ users.number }} sur {{ users.paginator.num_pages }}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        {% if users.has_next %}
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200" onclick="window.location.href='?page={{ users.next_page_number }}&search={{ request.GET.search }}'">Suivante</button>
+                        <button class="bg-gray-900 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200" onclick="window.location.href='?page={{ users.paginator.num_pages }}&search={{ request.GET.search }}'">Dernière</button>
+                        {% else %}
+                        <span class="bg-gray-300 text-gray-600 px-4 py-2 rounded">Suivante</span>
+                        <span class="bg-gray-300 text-gray-600 px-4 py-2 rounded">Dernière</span> 
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}
+

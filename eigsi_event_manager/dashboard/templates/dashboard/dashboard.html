@@ -1,0 +1,122 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+    <div class="h-screen overflow-hidden"> <!-- Conteneur principal -->
+        <div class="overflow-auto h-full p-4"> <!-- Conteneur pour scroller -->
+            <h2 class="text-xl font-bold mb-4">Statistiques du Dashboard</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 fade-in">
+                    <h3 class="text-lg font-semibold">Événements Créés</h3>
+                    <p class="text-3xl font-bold text-green-600">{{ total_evenements }}</p>
+                    <i class="fas fa-calendar-check text-5xl text-green-600"></i>
+                </div>
+
+                <div class="bg-white p-4 rounded shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 fade-in">
+                    <h3 class="text-lg font-semibold">Événements Publiés</h3>
+                    <p class="text-3xl font-bold text-blue-600">{{ total_evenements_publies }}</p>
+                    <i class="fas fa-check-circle text-5xl text-blue-600"></i>
+                </div>
+
+                <div class="bg-white p-4 rounded shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 fade-in">
+                    <h3 class="text-lg font-semibold">Événements Non Publiés</h3>
+                    <p class="text-3xl font-bold text-orange-600">{{ total_evenements_non_publies }}</p>
+                    <i class="fas fa-times-circle text-5xl text-orange-600"></i>
+                </div>
+
+                <div class="bg-white p-4 rounded shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 fade-in">
+                    <h3 class="text-lg font-semibold">Invités</h3>
+                    <p class="text-3xl font-bold text-purple-600">{{ total_invites }}</p>
+                    <i class="fas fa-user-friends text-5xl text-purple-600"></i>
+                </div>
+
+                <div class="bg-white p-4 rounded shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 fade-in">
+                    <h3 class="text-lg font-semibold">Participants Inscrits</h3>
+                    <p class="text-3xl font-bold text-teal-600">{{ total_participants }}</p>
+                    <i class="fas fa-user-check text-5xl text-teal-600"></i>
+                </div>
+
+                <!-- NOUVELLE SECTION : Utilisateurs Enregistrés -->
+                <div class="bg-white p-4 rounded shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-1 fade-in">
+                    <h3 class="text-lg font-semibold">Utilisateurs Enregistrés</h3>
+                    <p class="text-3xl font-bold text-indigo-600">{{ total_utilisateurs }}</p>
+                    <i class="fas fa-users text-5xl text-indigo-600"></i>
+                </div>
+            </div>
+
+            <!-- SECTION DES DERNIERS ÉVÉNEMENTS -->
+<div class="mt-6">
+    <h3 class="text-lg font-semibold">Derniers Événements</h3>
+    <div class="relative mt-4">
+        <div class="carousel">
+            {% for evenement in derniers_evenements %}
+            <div class="carousel-item bg-white rounded shadow-lg p-4">
+                <h4 class="font-semibold">{{ evenement.description }}</h4>
+                <p>Date : {{ evenement.date_event|date:"d M Y" }}</p>
+                <p>Lieu : {{ evenement.lieu }}</p>
+                <p>État : {{ evenement.acces_public|yesno:"Public,Privé" }}</p>
+            </div>
+            {% empty %}
+            <div class="carousel-item bg-white rounded shadow-lg p-4">
+                <p class="text-center">Aucun événement disponible.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Contrôles du carousel -->
+        <button class="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-600 text-white p-2 rounded-l" onclick="prevSlide()">‹</button>
+        <button class="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-600 text-white p-2 rounded-r" onclick="nextSlide()">›</button>
+    </div>
+</div>
+
+            <!-- SECTION DES KPI GRAPHIQUES -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold">KPI Graphiques</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-white p-4 rounded shadow">
+                        <canvas id="kpiChart1"></canvas>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow">
+                        <canvas id="kpiChart2"></canvas>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow">
+                        <canvas id="kpiChart3"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx1 = document.getElementById('kpiChart1').getContext('2d');
+    const kpiChart1 = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Événements Créés', 'Événements Publiés', 'Événements Non Publiés'],
+            datasets: [{
+                label: 'Nombre',
+                data: [{{ total_evenements }}, {{ total_evenements_publies }}, {{ total_evenements_non_publies }}],
+                backgroundColor: ['#38a169', '#3182ce', '#dd6b20'],
+                borderColor: '#fff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Nombre d\'Événements'
+                    }
+                }
+            }
+        }
+    });
+
+    // Ajoutez des graphiques similaires pour kpiChart2 et kpiChart3 avec des données différentes
+</script>

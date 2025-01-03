@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tableau de Bord</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Styles personnalisés */
+      .hover\:scale-105:hover {
+        transform: scale(1.05);
+      }
+
+      /* Ajout d'un style pour le menu déroulant */
+      #profileMenu {
+        display: none;
+        position: absolute;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.375rem;
+        z-index: 10;
+      }
+
+      #profileMenu a {
+        padding: 0.5rem 1rem;
+        display: block;
+        color: #4a5568;
+        transition: background 0.3s ease;
+      }
+
+      #profileMenu a:hover {
+        background: #ebf8ff;
+      }
+    </style>
+  </head>
+  {% comment %} {% block content %} {% endcomment %}
+
+  <body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-4 py-4">
+        <div class="flex justify-between items-center relative">
+          <div class="flex items-center">
+            <img
+              src="https://example.com/votre-logo-anime.gif"
+              alt="Logo"
+              class="logo mr-2"
+            />
+            <div class="text-xl font-bold">Mon Application</div>
+          </div>
+          <div class="flex items-center">
+            <input
+              type="text"
+              placeholder="Recherche..."
+              class="border border-gray-300 rounded px-2 py-1 mr-4"
+            />
+            <a
+              href="#"
+              class="flex items-center text-gray-700 hover:text-blue-500 mx-4"
+            >
+              <i class="fas fa-home mr-1"></i> Accès au site
+            </a>
+            <div class="relative">
+              <a
+                href="#"
+                class="flex items-center text-gray-700 hover:text-blue-500 mx-4"
+                id="profileToggle"
+              >
+                <i class="fas fa-user-circle mr-1"></i> Profil Admin
+              </a>
+              <div id="profileMenu">
+                <a href="#" class="hover:text-blue-500 flex items-center">
+                  <i class="fas fa-eye mr-1"></i> Voir le Profil
+                </a>
+                <a href="#" class="hover:text-blue-500 flex items-center">
+                  <i class="fas fa-sign-out-alt mr-1"></i> Déconnexion
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="flex flex-col md:flex-row">
+      <!-- Sidebar -->
+      <aside class="w-full md:w-64 bg-white shadow h-screen p-4">
+        <h2 class="text-lg font-semibold mb-4">Menu</h2>
+        <ul>
+          <li>
+            <a
+              href="#"
+              class="flex items-center p-2 text-gray-700 hover:bg-blue-500 hover:text-white rounded transition-colors duration-200"
+            >
+              <i class="fas fa-tachometer-alt mr-2"></i> Tableau de bord
+            </a>
+          </li>
+          <li>
+            <a
+            href=""
+
+            class="flex items-center p-2 text-gray-700 hover:bg-blue-500 hover:text-white rounded transition-colors duration-200"
+            >
+              <i class="fas fa-calendar-alt mr-2"></i> Événements
+            </a>
+          </li>
+          <li>
+            <a
+            href=""
+            class="flex items-center p-2 text-gray-700 hover:bg-blue-500 hover:text-white rounded transition-colors duration-200"
+            >
+              <i class="fas fa-user-friends mr-2"></i> Utilisateurs
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center p-2 text-gray-700 hover:bg-blue-500 hover:text-white rounded transition-colors duration-200"
+            >
+              <i class="fas fa-file-alt mr-2"></i> Rapports
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center p-2 text-gray-700 hover:bg-blue-500 hover:text-white rounded transition-colors duration-200"
+            >
+              <i class="fas fa-cog mr-2"></i> Paramètres
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6">
+        {% block content %}
+        <h2 class="text-xl font-semibold">Tableau de Bord Principal</h2>
+        <p class="mt-2 text-gray-600">
+          Gérez vos événements, utilisateurs et rapports ici.
+        </p>
+
+        <!-- Theme Toggle Button -->
+        <div class="mb-4">
+          <button
+            id="themeToggle"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-200"
+          >
+            Changer de Thème
+          </button>
+        </div>
+
+        <!-- Example Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+          <div
+            class="bg-white p-4 shadow-lg rounded hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
+          >
+            <div class="flex items-center">
+              <i class="fas fa-calendar-alt text-3xl text-blue-500 mr-4"></i>
+              <div>
+                <h3 class="font-bold">Événements à venir</h3>
+                <p class="mt-2">Vous avez 3 événements à venir.</p>
+                <a href="#" class="text-blue-500 hover:underline">Voir plus</a>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 shadow-lg rounded hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
+          >
+            <div class="flex items-center">
+              <i class="fas fa-users text-3xl text-blue-500 mr-4"></i>
+              <div>
+                <h3 class="font-bold">Utilisateurs actifs</h3>
+                <p class="mt-2">15 utilisateurs en ligne.</p>
+                <a href="#" class="text-blue-500 hover:underline">Voir plus</a>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 shadow-lg rounded hover:shadow-xl transition-shadow duration-300 transform hover:scale-105"
+          >
+            <div class="flex items-center">
+              <i class="fas fa-chart-line text-3xl text-blue-500 mr-4"></i>
+              <div>
+                <h3 class="font-bold">Rapports récents</h3>
+                <p class="mt-2">Aucun rapport récent.</p>
+                <a href="#" class="text-blue-500 hover:underline">Voir plus</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activities Section -->
+        <div class="bg-white p-4 mt-6 shadow-lg rounded">
+          <h3 class="font-bold">Activités Récentes</h3>
+          <ul class="mt-2 space-y-2">
+            <li class="flex items-center">
+              <i class="fas fa-check-circle text-green-500 mr-2"></i> Événement
+              "Concert de Musique" ajouté le 20/10/2024.
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-check-circle text-green-500 mr-2"></i>
+              Utilisateur "Jean Dupont" s'est inscrit le 21/10/2024.
+            </li>
+            <li class="flex
+            <li class="flex items-center">
+              <i class="fas fa-check-circle text-green-500 mr-2"></i> Événement
+              "Formation AI" ajouté le 21/10/2024.
+            </li>
+          </ul>
+        </div>
+        {% endblock %}
+      </main>
+    </div>
+
+    <script>
+      // Script pour le menu déroulant du profil
+      const profileToggle = document.getElementById("profileToggle");
+      const profileMenu = document.getElementById("profileMenu");
+
+      profileToggle.addEventListener("click", () => {
+        profileMenu.style.display =
+          profileMenu.style.display === "block" ? "none" : "block";
+      });
+
+      // Script pour le changement de thème
+      const themeToggle = document.getElementById("themeToggle");
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("bg-gray-800");
+        document.body.classList.toggle("text-white");
+      });
+
+      // Ferme le menu si l'utilisateur clique en dehors
+      window.onclick = function (event) {
+        if (!event.target.matches("#profileToggle")) {
+          if (profileMenu.style.display === "block") {
+            profileMenu.style.display = "none";
+          }
+        }
+      };
+    </script>
+  </body>
+  {% comment %} {% endblock %} {% endcomment %}
+</html>

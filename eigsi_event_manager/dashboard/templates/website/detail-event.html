@@ -1,0 +1,166 @@
+{% extends 'website/base.html' %}
+{% load static %}
+{% load static tailwind_tags %}
+{% load django_browser_reload %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 flex flex-col md:flex-row">
+    <!-- Section principale de l'événement -->
+    <div class="w-full md:w-2/3 mb-8 md:mb-0">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ event.titre }}</h1>
+        
+        {% if event.cover_img %}
+            <img src="{{ event.cover_img.url }}" alt="Image de couverture de l'événement" class="w-full h-64 object-cover rounded-lg mb-6 shadow-lg transition-transform duration-300 hover:scale-105">
+        {% endif %}
+        
+        <div class="bg-white shadow-lg rounded-lg p-6">
+            <div class="mb-4 border-b pb-4">
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-calendar-alt text-green-600 mr-3"></i>
+                    <strong class="text-gray-800">Date :</strong> <span>{{ event.date_event|date:"d M Y" }}</span>
+                </p>
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-map-marker-alt text-red-600 mr-3"></i>
+                    <strong class="text-gray-800">Lieu :</strong> <span>{{ event.lieu }}</span>
+                </p>
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-tags text-purple-600 mr-3"></i>
+                    <strong class="text-gray-800">Type :</strong> <span>{{ event.get_type_display }}</span>
+                </p>
+            </div>
+            
+            {% if event.categorie_parascolaire %}
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-graduation-cap text-orange-600 mr-3"></i>
+                    <strong class="text-gray-800">Catégorie Parascolaire :</strong> <span>{{ event.get_categorie_parascolaire_display }}</span>
+                </p>
+            {% endif %}
+            
+            {% if event.categorie_academique %}
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-book text-teal-600 mr-3"></i>
+                    <strong class="text-gray-800">Catégorie Académique :</strong> <span>{{ event.get_categorie_academique_display }}</span>
+                </p>
+            {% endif %}
+            
+            <div class="mt-4">
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                    <strong class="text-gray-800">Description :</strong>
+                </p>
+                <p class="text-gray-800">{{ event.description|linebreaks }}</p>
+            </div>
+            
+            <div class="mt-4">
+                <p class="text-gray-600 flex items-center mb-2">
+                    <i class="fas fa-user-friends text-yellow-600 mr-3"></i>
+                    <strong class="text-gray-800">Accès :</strong> <span>{{ event.acces_public|yesno:"Public, Privé" }}</span>
+                </p>
+            </div>
+
+            <!-- Bouton de participation -->
+            <div class="mt-6">
+                <button class="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-300">
+                    Participer à l'événement
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Menu contextuel des autres événements -->
+    <div class="w-full md:w-1/3 ml-0 md:ml-6">
+        <div class="bg-white shadow-lg rounded-lg p-6 h-full relative overflow-hidden">
+            <h2 class="text-xl font-semibold mb-4 text-blue-700">Autres Événements</h2>
+            <ul id="event-list" class="space-y-4 max-h-[400px] overflow-y-auto relative scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                {% for other_event in other_events %}
+                    <li class="transition transform hover:-translate-y-1 hover:shadow-lg cursor-pointer p-4 rounded-lg bg-gray-100 hover:bg-gray-200 flex">
+                        <a href="{% url 'dashboard:detail-event' other_event.id %}" class="flex w-full items-start">
+                            <!-- Image de couverture agrandie -->
+                            {% if other_event.cover_img %}
+                                <img src="{{ other_event.cover_img.url }}" alt="Image de {{ other_event.titre }}" class="w-24 h-24 object-cover rounded-lg mr-4">
+                            {% endif %}
+                            
+                            <!-- Détails de l'événement -->
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-800">{{ other_event.titre }}</h3>
+                                <p class="text-gray-600 text-sm">{{ other_event.date_event|date:"d M Y" }}</p>
+                                
+                                <!-- Lieu -->
+                                <p class="text-gray-500 text-sm mt-1 flex items-center">
+                                    <i class="fas fa-map-marker-alt text-red-600 mr-1"></i> {{ other_event.lieu }}
+                                </p>
+                                
+                                <!-- Type d'événement -->
+                                <p class="text-gray-500 text-sm mt-1 flex items-center">
+                                    <i class="fas fa-tags text-purple-600 mr-1"></i> {{ other_event.get_type_display }}
+                                </p>
+
+                                <!-- Accès -->
+                                <p class="text-gray-500 text-sm mt-1 flex items-center">
+                                    <i class="fas fa-user-friends text-yellow-600 mr-1"></i> 
+                                    Accès : {{ other_event.acces_public|yesno:"Public, Privé" }}
+                                </p>
+                                
+                                <!-- Description abrégée -->
+                                <p class="text-gray-500 text-sm mt-2 line-clamp-2">{{ other_event.description|truncatewords:20 }}</p>
+                            </div>
+                        </a>
+                    </li>
+                    
+                {% empty %}
+                    <li class="text-gray-500">Aucun autre événement disponible.</li>
+                {% endfor %}
+            </ul>
+            <div class="mt-6 flex justify-center">
+                <img src="{% static 'images/logo4.png' %}" alt="Image contextuelle" class="w-full h-40 object-cover border border-gray-300 rounded-md shadow-md">
+            </div>
+        </div>
+       
+    </div>
+    
+</div>
+
+<script>
+    // Fonction de défilement automatique et gestion utilisateur
+    document.addEventListener('DOMContentLoaded', function () {
+        const eventList = document.getElementById('event-list');
+        let scrollPosition = 0;
+        let isUserScrolling = false; // Suivi de l'interaction utilisateur
+        let scrollInterval;
+    
+        // Démarrer le défilement automatique
+        function startAutoScroll() {
+            stopAutoScroll(); // Assurez-vous de nettoyer tout intervalle existant
+            scrollInterval = setInterval(() => {
+                if (!isUserScrolling) {
+                    if (scrollPosition >= eventList.scrollHeight - eventList.clientHeight) {
+                        scrollPosition = 0; // Réinitialiser au début
+                    } else {
+                        scrollPosition += 1; // Défilement progressif
+                    }
+                    eventList.scrollTop = scrollPosition;
+                }
+            }, 50);
+        }
+    
+        // Arrêter le défilement automatique
+        function stopAutoScroll() {
+            clearInterval(scrollInterval);
+        }
+    
+        // Gestion de l'interaction utilisateur (scroll manuel)
+        eventList.addEventListener('scroll', () => {
+            isUserScrolling = true; // Marquer que l'utilisateur défile
+            scrollPosition = eventList.scrollTop; // Synchroniser la position
+            setTimeout(() => {
+                isUserScrolling = false; // Réinitialiser après une période d'inactivité
+            }, 100); // Temps d'inactivité avant reprise (0,1 seconde)
+        });
+    
+        // Initialiser le défilement automatique
+        startAutoScroll();
+    });
+    </script>
+    
+
+{% endblock %}

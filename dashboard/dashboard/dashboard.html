@@ -1,0 +1,226 @@
+{% extends 'basedash.html' %}
+
+{% block content %}
+<main class="mt-6">
+    <h2 class="text-2xl font-semibold">Tableau de Bord Principal</h2>
+    <p class="mt-2 text-yellow-500">Gérez vos événements, utilisateurs et rapports ici.</p>
+
+    <!-- Quick Actions Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        <div class="bg-blue-500 text-white p-6 rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">
+            <div class="flex items-center">
+                <i class="fas fa-calendar-alt text-4xl"></i>
+                <div class="ml-4">
+                    <h3 class="text-lg font-bold">Créer un Événement</h3>
+                    <p class="mt-2">Ajoutez un nouvel événement.</p>
+                    <a href="" class="text-white underline">Commencer</a>
+                </div>
+            </div>
+        </div>
+        <div class="bg-green-500 text-white p-6 rounded-lg shadow-lg hover:bg-green-600 transition duration-300">
+            <div class="flex items-center">
+                <i class="fas fa-users text-4xl"></i>
+                <div class="ml-4">
+                    <h3 class="text-lg font-bold">Gérer les Utilisateurs</h3>
+                    <p class="mt-2">Consultez et gérez les utilisateurs.</p>
+                    <a href="" class="text-white underline">Voir les utilisateurs</a>
+                </div>
+            </div>
+        </div>
+        <div class="bg-red-300 p-6 rounded-lg shadow-lg hover:bg-orange-600 transition duration-300">
+            <div class="flex items-center">
+                <i class="fas fa-chart-bar text-4xl"></i>
+                <div class="ml-4">
+                    <h3 class="text-lg font-bold">Rapports</h3>
+                    <p class="mt-2">Accédez aux rapports d'événements.</p>
+                    <a href="" class="text-gray-800 underline">Voir les rapports</a>
+                </div>
+            </div>
+        </div>
+        <div class="bg-purple-500 text-white p-6 rounded-lg shadow-lg hover:bg-purple-600 transition duration-300">
+            <div class="flex items-center">
+                <i class="fas fa-cogs text-4xl"></i>
+                <div class="ml-4">
+                    <h3 class="text-lg font-bold">Paramètres</h3>
+                    <p class="mt-2">Configurez les paramètres du tableau de bord.</p>
+                    <a href="" class="text-white underline">Accéder aux paramètres</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="font-bold text-lg">Total d'Événements</h3>
+            <p class="mt-2 text-3xl font-bold">42</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="font-bold text-lg">Utilisateurs Inscrits</h3>
+            <p class="mt-2 text-3xl font-bold">150</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="font-bold text-lg">Événements Passés</h3>
+            <p class="mt-2 text-3xl font-bold">25</p>
+        </div>
+    </div>
+
+    <!-- Overview Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="font-bold text-lg">Événements à Venir</h3>
+            <ul class="mt-2 space-y-2">
+                <li class="flex justify-between">
+                    <span>Concert de Musique</span>
+                    <span>20/10/2024</span>
+                </li>
+                <li class="flex justify-between">
+                    <span>Conférence Tech</span>
+                    <span>25/10/2024</span>
+                </li>
+                <li class="flex justify-between">
+                    <span>Atelier de Coding</span>
+                    <span>30/10/2024</span>
+                </li>
+            </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="font-bold text-lg">Utilisateurs Actifs</h3>
+            <p class="mt-2 text-gray-600">15 utilisateurs en ligne.</p>
+            <a href="" class="text-blue-600 hover:underline">Voir les utilisateurs</a>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="font-bold text-lg">Rapports Récents</h3>
+            <p class="mt-2 text-gray-600">Aucun rapport récent.</p>
+            <a href="" class="text-blue-600 hover:underline">Voir les rapports</a>
+        </div>
+    </div>
+
+    <!-- Recent Activities Section -->
+    <div class="bg-white p-6 mt-6 shadow-lg rounded-lg">
+        <h3 class="font-bold text-lg">Activités Récentes</h3>
+        <ul class="mt-2 space-y-2">
+            <li class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                Événement "Concert de Musique" ajouté le 20/10/2024.
+            </li>
+            <li class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                Utilisateur "Jean Dupont" s'est inscrit le 21/10/2024.
+            </li>
+            <li class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                Rapport "Évaluation de l'événement" créé le 22/10/2024.
+            </li>
+        </ul>
+    </div>
+
+     <!-- Static Charts Section -->
+     <div class="bg-white p-6 mt-6 shadow-lg rounded-lg">
+        <h3 class="font-bold text-lg">Statistiques des Événements</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-4">
+            <div>
+                <canvas id="chart1" class="h-48"></canvas>
+            </div>
+            <div>
+                <canvas id="chart2" class="h-48"></canvas>
+            </div>
+            <div>
+                <canvas id="chart3" class="h-48"></canvas>
+            </div>
+            <div>
+                <canvas id="chart4" class="h-48"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script for Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx1 = document.getElementById('chart1').getContext('2d');
+        const chart1 = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'],
+                datasets: [{
+                    label: 'Événements Par Mois',
+                    data: [10, 20, 15, 25, 30],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('chart2').getContext('2d');
+        const chart2 = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Événements A', 'Événements B', 'Événements C'],
+                datasets: [{
+                    label: 'Répartition des Événements',
+                    data: [30, 50, 20],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        const ctx3 = document.getElementById('chart3').getContext('2d');
+        const chart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['Semaine 1', 'Semaine 2', 'Semaine 3', 'Semaine 4'],
+                datasets: [{
+                    label: 'Participants Hebdomadaires',
+                    data: [15, 30, 25, 40],
+                    fill: false,
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        const ctx4 = document.getElementById('chart4').getContext('2d');
+        const chart4 = new Chart(ctx4, {
+            type: 'radar',
+            data: {
+                labels: ['Qualité', 'Prix', 'Accessibilité', 'Service', 'Satisfaction'],
+                datasets: [{
+                    label: 'Évaluation des Événements',
+                    data: [4, 3, 5, 4, 4],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</main>
+{% endblock %}

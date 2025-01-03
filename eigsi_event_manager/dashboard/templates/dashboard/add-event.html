@@ -1,0 +1,162 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Ajouter un Événement{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Formulaire d'ajout d'événement -->
+        <form action="{% url 'dashboard:add-event' %}" method="post" enctype="multipart/form-data" class="bg-white shadow-lg rounded-lg p-4">
+            {% csrf_token %}
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ajouter un Événement</h2>
+
+            {{ form.non_field_errors }}
+
+            <div class="mb-4">
+                <label for="titre" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-heading mr-2"></i> Titre
+                </label>
+                <input type="text" name="titre" id="titre" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" value="{{ form.titre.value|default:'' }}">
+            </div>
+
+            <div class="mb-4">
+                <label for="date_event" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-calendar-alt mr-2"></i> Date et Heure
+                </label>
+                <input type="datetime-local" name="date_event" id="date_event" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" value="{{ form.date_event.value|default:'' }}">
+            </div>
+
+            <div class="mb-4">
+                <label for="lieu" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-map-marker-alt mr-2"></i> Lieu
+                </label>
+                <input type="text" name="lieu" id="lieu" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" value="{{ form.lieu.value|default:'' }}">
+            </div>
+
+            <div class="mb-4">
+                <label for="type" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-tags mr-2"></i> Type
+                </label>
+                <select name="type" id="type" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    {% for value, display in form.type.field.choices %}
+                        <option value="{{ value }}"{% if value == form.type.value %} selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="categorie_parascolaire" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-bookmark mr-2"></i> Catégorie Parascolaire
+                </label>
+                <select name="categorie_parascolaire" id="categorie_parascolaire" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    {% for value, display in form.categorie_parascolaire.field.choices %}
+                        <option value="{{ value }}"{% if value == form.categorie_parascolaire.value %} selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="categorie_academique" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-graduation-cap mr-2"></i> Catégorie Académique
+                </label>
+                <select name="categorie_academique" id="categorie_academique" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    {% for value, display in form.categorie_academique.field.choices %}
+                        <option value="{{ value }}"{% if value == form.categorie_academique.value %} selected{% endif %}>{{ display }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4 flex items-center">
+                <input type="checkbox" name="acces_public" id="acces_public" class="mr-2">
+                <label for="acces_public" class="text-gray-700">Accès Public</label>
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-pencil-alt mr-2"></i> Description
+                </label>
+                <textarea name="description" id="description" rows="2" required class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">{{ form.description.value|default:'' }}</textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="cover_img" class="flex items-center text-gray-700 mb-1">
+                    <i class="fas fa-image mr-2"></i> Image de Couverture
+                </label>
+                <input type="file" name="cover_img" id="cover_img" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900" onchange="showPreview(event)">
+            </div>
+
+            <div class="flex items-center justify-end">
+                <button type="submit" class="bg-gray-900 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-700 transition">Ajouter l'Événement</button>
+            </div>
+        </form>
+
+        <!-- Aperçu de l'événement -->
+        <div class="bg-white shadow-lg rounded-lg p-4">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-800">Aperçu de l'Événement</h2>
+            <div class="flex flex-col">
+                <div class="text-lg text-gray-700 mb-1">
+                    <strong>Titre :</strong> <span id="preview-titre"></span>
+                </div>
+                <div class="text-lg text-gray-700 mb-1">
+                    <strong>Date et Heure :</strong> <span id="preview-date"></span>
+                </div>
+                <div class="text-lg text-gray-700 mb-1">
+                    <strong>Lieu :</strong> <span id="preview-lieu"></span>
+                </div>
+                <div class="text-lg text-gray-700 mb-1">
+                    <strong>Type :</strong> <span id="preview-type"></span>
+                </div>
+                <div class="text-lg text-gray-700 mb-1">
+                    <strong>Description :</strong>
+                    <div id="preview-description" class="whitespace-pre-wrap"></div>
+                </div>
+                <div class="text-lg text-gray-700 mb-1">
+                    <strong>Image de Couverture :</strong>
+                </div>
+                <div class="w-full h-32 bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="" alt="Aperçu de l'image" class="w-full h-full object-cover" id="preview-img" style="max-height: 100%; max-width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Affiche l'aperçu de l'image
+    function showPreview(event) {
+        if (event.target.files.length > 0) {
+            let src = URL.createObjectURL(event.target.files[0]);
+            document.querySelector('#preview-img').src = src;
+        }
+    }
+
+    // Affiche l'aperçu des autres informations de l'événement
+    document.querySelector('#titre').addEventListener('input', function() {
+        document.querySelector('#preview-titre').textContent = this.value;
+    });
+    document.querySelector('#date_event').addEventListener('input', function() {
+        document.querySelector('#preview-date').textContent = this.value;
+    });
+    document.querySelector('#lieu').addEventListener('input', function() {
+        document.querySelector('#preview-lieu').textContent = this.value;
+    });
+    document.querySelector('#type').addEventListener('change', function() {
+        document.querySelector('#preview-type').textContent = this.options[this.selectedIndex].text;
+    });
+    document.querySelector('#description').addEventListener('input', function() {
+        document.querySelector('#preview-description').textContent = this.value;
+    });
+</script>
+
+<style>
+    #preview-description {
+        overflow-y: auto;
+        max-height: 100px;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        background-color: #f7fafc;
+    }
+</style>
+
+{% endblock %}

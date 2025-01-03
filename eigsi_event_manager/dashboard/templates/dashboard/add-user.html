@@ -1,0 +1,110 @@
+{% extends 'dashboard/base.html' %}
+{% load django_browser_reload %}
+{% load static %}
+
+{% block title %}Ajouter Utilisateur{% endblock %}
+
+{% block content %}
+<div class="flex items-start justify-center min-h-screen p-4 bg-gray-100">
+    <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-4xl mt-4">
+        <h1 class="text-2xl text-center font-bold text-gray-900 mb-4">
+            <i class="fas fa-user-plus mr-2 icon-color"></i> Ajouter un Utilisateur
+        </h1>
+
+        {% if form.errors %}
+        <div class="text-red-600">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                <li>{{ field }} : {{ errors|striptags }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-4" action="{% url 'dashboard:add-user' %}">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="prenom" class="block text-gray-700">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" required class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez le prénom">
+                </div>
+
+                <div>
+                    <label for="nom" class="block text-gray-700">Nom</label>
+                    <input type="text" id="nom" name="nom" required class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez le nom">
+                </div>
+
+                <div>
+                    <label for="username" class="block text-gray-700">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" required class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez le nom d'utilisateur">
+                </div>
+
+                <div>
+                    <label for="adresse_email" class="block text-gray-700">Email</label>
+                    <input type="email" id="adresse_email" name="adresse_email" required class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez l'email">
+                </div>
+
+                <div>
+                    <label for="password1" class="block text-gray-700">Mot de passe</label>
+                    <input type="password" id="password1" name="password1" required class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez le mot de passe">
+                </div>
+
+                <div>
+                    <label for="password2" class="block text-gray-700">Confirmez le mot de passe</label>
+                    <input type="password" id="password2" name="password2" required class="mt-1 p-2 w-full border rounded-md" placeholder="Confirmez le mot de passe">
+                </div>
+
+                <div>
+                    <label for="profile_picture" class="block text-gray-700">Photo</label>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*" class="mt-1 p-2 w-full border rounded-md">
+                </div>
+
+                <div>
+                    <label for="role" class="block text-gray-700">Rôle</label>
+                    <select id="role" name="role" required class="mt-1 p-2 w-full border rounded-md">
+                        <option value="" disabled selected>Sélectionnez un rôle</option>
+                        <option value="Administrateur">Administrateur</option>
+                        <option value="Étudiant">Étudiant</option>
+                        <option value="Invité">Invité</option>
+                    </select>
+                </div>
+
+                <div id="affiliation-container" style="display:none;">
+                    <div>
+                        <label for="affiliation" class="block text-gray-700">Affiliation</label>
+                        <input type="text" id="affiliation" name="affiliation" class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez l'affiliation (ex: Promo, Événement)">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="numero_telephone" class="block text-gray-700">Téléphone</label>
+                    <input type="tel" id="numero_telephone" name="numero_telephone" class="mt-1 p-2 w-full border rounded-md" placeholder="Entrez votre numéro de téléphone" required pattern="[0-9]{10}">
+                </div>
+                
+            </div>
+
+            <button type="submit" class="w-full bg-gray-900 text-white p-2 rounded hover:bg-gray-800 transition">
+                <i class="fas fa-user-plus mr-2"></i> Ajouter
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // JavaScript pour gérer l'affichage du champ d'affiliation selon le rôle sélectionné
+    document.getElementById('role').addEventListener('change', function() {
+        var affiliationContainer = document.getElementById('affiliation-container');
+        if (this.value === 'Étudiant') {
+            affiliationContainer.style.display = 'block';
+            document.getElementById('affiliation').placeholder = "Entrez la promo ou dominante";
+        } else if (this.value === 'Invité') {
+            affiliationContainer.style.display = 'block';
+            document.getElementById('affiliation').placeholder = "Entrez l'événement ou provenance";
+        } else {
+            affiliationContainer.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}
+{% django_browser_reload_script %}

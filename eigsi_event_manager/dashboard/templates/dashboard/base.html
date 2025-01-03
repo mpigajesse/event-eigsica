@@ -1,0 +1,182 @@
+{% load static %}
+{% load static tailwind_tags %}
+{% load django_browser_reload %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/flowbite@1.5.3/dist/flowbite.js"></script>
+    {% tailwind_css %}
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        /* Ajout de styles pour le menu */
+        .menu-item {
+            transition: background-color 0.3s;
+        }
+        .menu-item:hover {
+            background-color: #4b5563; /* Couleur de fond au survol */
+        }
+        /* Styles pour le menu en mode portrait et paysage */
+        @media (max-width: 768px) {
+            #sidebar {
+                display: none; /* Cache le sidebar par défaut sur mobile */
+            }
+            #sidebar.show {
+                display: block; /* Affiche le sidebar si la classe show est ajoutée */
+            }
+        }
+        @media (orientation: landscape) {
+            #sidebar {
+                display: block; /* Affiche le sidebar en mode paysage */
+            }
+        }
+        @media (orientation: portrait) {
+            #sidebar {
+                display: none; /* Cache le sidebar en mode portrait */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="max-w-screen-xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="{% url 'dashboard:dashboard' %}" class="flex items-center text-gray-900 text-2xl font-bold">
+                <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+            </a>
+            <div class="flex items-center">
+                <div class="relative mr-4 flex-grow">
+                    <input type="text" placeholder="Rechercher..." class="border rounded-full pl-10 pr-4 py-2 border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent w-full">
+                    <div class="absolute left-3 top-2 text-gray-500">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="md:flex items-center hidden">
+                    <a href="{% url 'dashboard:index' %}" class="flex items-center text-gray-600 hover:text-gray-900 transition px-4">
+                        <i class="fas fa-external-link-alt mr-2"></i> Accéder au site
+                    </a>
+                    <div class="flex items-center">
+                        {% if request.user.profile_picture %}
+                            <img src="{{ request.user.profile_picture.url }}" alt="Photo de profil" class="w-8 h-8 rounded-full mr-2">
+                        {% else %}
+                            <img src="{% static 'default-profile.png' %}" alt="Photo de profil par défaut" class="w-8 h-8 rounded-full mr-2">
+                        {% endif %}
+                        <span class="text-gray-700 flex items-center">
+                            <i class=""></i> 
+                            <a href="{% url 'dashboard:profile' %}">{{ request.user.username }}</a>
+                        </span>
+                        
+                    </div>
+                    <a href="{% url 'dashboard:logout' %}" class="flex items-center text-gray-600 hover:text-gray-900 transition px-4">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                    </a>
+                </div>
+                
+                <button id="menu-toggle" class="bg-gray-900 md:hidden text-white p-2 rounded hover:bg-gray-800 transition">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="bg-gradient-to-br from-gray-800 to-gray-900 w-64 p-4 shadow-lg h-full hidden md:block">
+            <h2 class="font-semibold text-lg mb-4 text-white">Menu Principal</h2>
+            <ul class="space-y-2">
+                <li>
+                    <a href="#" class="flex items-center p-2 text-white hover:bg-gray-900 rounded transition-colors menu-toggle menu-item">
+                        <i class="fas fa-calendar-alt mr-2"></i> Événements
+                    </a>
+                    <ul class="ml-4 mt-1 space-y-1 hidden">
+                        <li><a href="#" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-calendar-alt mr-2"></i> Mon Agenda</a></li>
+                        <li><a href="{% url 'dashboard:event-list' %}" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-list mr-2"></i> Liste des Événements</a></li> <!-- Lien vers la liste des événements -->
+                        <li><a href="{% url 'dashboard:add-event' %}" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-plus-circle mr-2"></i> Ajouter un Événement</a></li>
+                        <li><a href="{% url 'dashboard:archive-list' %}" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors">
+                            <i class="fas fa-archive mr-2"></i> Archives
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <a href="#" class="flex items-center p-2 text-white hover:bg-gray-900 rounded transition-colors menu-toggle menu-item">
+                        <i class="fas fa-users mr-2"></i> Gestion des Utilisateurs
+                    </a>
+                    <ul class="ml-4 mt-1 space-y-1 hidden">
+                        <li><a href="{% url 'dashboard:user-list' %}" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-user-friends mr-2"></i> Liste des Utilisateurs</a></li>
+                        <li><a href="{% url 'dashboard:add-user' %}" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-user-plus mr-2"></i> Ajouter un Utilisateur</a></li>
+                        <li><a href="{% url 'dashboard:profile' %}" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-user mr-2"></i> Mon Profil</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-2 text-white hover:bg-gray-900 rounded transition-colors menu-toggle menu-item">
+                        <i class="fas fa-cogs mr-2"></i> Paramètres
+                    </a>
+                    <ul class="ml-4 mt-1 space-y-1 hidden">
+                        <li><a href="#" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-tools mr-2"></i> Réglages Généraux</a></li>
+                        <li><a href="#" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-bell mr-2"></i> Notifications</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-2 text-white hover:bg-gray-900 rounded transition-colors">
+                        <i class="fas fa-chart-line mr-2"></i> Rapports
+                    </a>
+                    <ul class="ml-4 mt-1 space-y-1 hidden">
+                        <li><a href="#" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-file-alt mr-2"></i> Rapports de Performance</a></li>
+                        <li><a href="#" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-chart-pie mr-2"></i> Analytique</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center p-2 text-white hover:bg-gray-900 rounded transition-colors">
+                        <i class="fas fa-comments mr-2"></i> Messages
+                    </a>
+                    <ul class="ml-4 mt-1 space-y-1 hidden">
+                        <li><a href="#" class="flex items-center p-2 text-gray-300 hover:bg-gray-900 rounded transition-colors"><i class="fas fa-paper-plane mr-2"></i> Nouveaux Messages</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 p-4">
+            {% block content %}
+            <!-- Contenu dynamique ici -->
+            {% endblock %}
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white shadow-md mt-auto">
+        <div class="max-w-screen-xl mx-auto px-4 py-4 text-center text-gray-600">
+            <p>&copy; {{ current_year }} Mon Application. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Script pour gérer l'affichage du sidebar sur mobile
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        });
+
+        // Gérer le sous-menu
+        document.querySelectorAll('.menu-toggle').forEach(item => {
+            item.addEventListener('click', function() {
+                const subMenu = this.nextElementSibling;
+                if (subMenu) {
+                    subMenu.classList.toggle('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

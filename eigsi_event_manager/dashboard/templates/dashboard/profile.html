@@ -1,0 +1,116 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 py-10">
+    <div class="bg-white shadow-lg rounded-lg p-8 max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-6 text-center text-gray-900">Profil de {{ user.username }}</h2>
+
+        <!-- Section de photo de profil -->
+        <div class="flex justify-center mb-8">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Photo de profil de {{ user.username }}" class="w-32 h-32 rounded-full border-4 border-gray-900 shadow-md">
+            {% else %}
+                <div class="w-32 h-32 rounded-full border-4 border-gray-900 flex items-center justify-center text-gray-400">
+                    <i class="fas fa-user-circle text-6xl"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Informations du profil utilisateur -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-300">
+                <p class="font-semibold text-gray-900"><i class="fas fa-user-circle text-gray-900"></i> <strong>Nom d'utilisateur:</strong> {{ user.username }}</p>
+                <p class="font-semibold text-gray-900"><i class="fas fa-envelope text-gray-900"></i> <strong>Email:</strong> {{ user.email }}</p>
+                <p class="font-semibold text-gray-900"><i class="fas fa-phone text-gray-900"></i> <strong>Téléphone:</strong> {{ user.numero_telephone }}</p>
+                <p class="font-semibold text-gray-900"><i class="fas fa-user-tag text-gray-900"></i> <strong>Rôle:</strong> {{ user.role }}</p>
+                {% if user.is_administrateur %}
+                    <p class="font-semibold text-gray-900"><i class="fas fa-building text-gray-900"></i> <strong>Affiliation:</strong> {{ user.administrateur.affiliation }}</p>
+                {% elif user.is_etudiant %}
+                    <p class="font-semibold text-gray-900"><i class="fas fa-graduation-cap text-gray-900"></i> <strong>Promotion:</strong> {{ user.etudiant.promotion }}</p>
+                    <p class="font-semibold text-gray-900"><i class="fas fa-school text-gray-900"></i> <strong>Dominante:</strong> {{ user.etudiant.dominante }}</p>
+                {% endif %}
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4 border border-gray-300">
+                {% comment %} <p class="font-semibold text-gray-900"><i class="fas fa-address-card text-gray-900"></i> <strong>Adresse:</strong> {{ user.adresse_email }}</p> {% endcomment %}
+                <p class="font-semibold text-gray-900"><i class="fas fa-calendar-alt text-gray-900"></i> <strong>Date de création:</strong> {{ user.date_joined }}</p>
+                <p class="font-semibold text-gray-900"><i class="fas fa-clock text-gray-900"></i> <strong>Dernière connexion:</strong> {{ user.last_login }}</p>
+            </div>
+        </div>
+
+        <!-- Bouton pour ouvrir le modal -->
+        <div class="text-center">
+            <button class="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition" 
+                    onclick="document.getElementById('profileModal').classList.remove('hidden');">
+                <i class="fas fa-edit"></i> Modifier le profil
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="profileModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 items-center justify-center hidden">
+    <div class="bg-white w-full max-w-md rounded-lg shadow-lg p-6">
+        <h3 class="text-xl font-semibold mb-4 text-center text-gray-900">Modifier votre profil</h3>
+
+        <!-- Formulaire d'édition du profil -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-4">
+                <div>
+                    <label for="username" class="block font-semibold text-gray-900">Nom d'utilisateur</label>
+                    <input type="text" id="username" name="username" value="{{ user.username }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-2" required>
+                </div>
+                <div>
+                    <label for="email" class="block font-semibold text-gray-900">Email</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-2" required>
+                </div>
+                {% comment %} <div>
+                    <label for="role" class="block font-semibold text-gray-900">Rôle</label>
+                    <select id="role" name="role" class="mt-1 block w-full border border-gray-300 rounded-lg p-2">
+                        <option value="Administrateur" {% if user.role == "Administrateur" %}selected{% endif %}>Administrateur</option>
+                        <option value="Étudiant" {% if user.role == "Étudiant" %}selected{% endif %}>Étudiant</option>
+                        <option value="Invité" {% if user.role == "Invité" %}selected{% endif %}>Invité</option>
+                    </select>
+                </div> {% endcomment %}
+                {% if user.is_administrateur %}
+                <div>
+                    <label for="affiliation" class="block font-semibold text-gray-900">Affiliation</label>
+                    <input type="text" id="affiliation" name="affiliation" value="{{ user.administrateur.affiliation }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-2">
+                </div>
+                {% elif user.is_etudiant %}
+                <div>
+                    <label for="promotion" class="block font-semibold text-gray-900">Promotion</label>
+                    <input type="text" id="promotion" name="promotion" value="{{ user.etudiant.promotion }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-2">
+                </div>
+                <div>
+                    <label for="dominante" class="block font-semibold text-gray-900">Dominante</label>
+                    <input type="text" id="dominante" name="dominante" value="{{ user.etudiant.dominante }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-2">
+                </div>
+                {% endif %}
+                <div>
+                    <label for="phone" class="block font-semibold text-gray-900">Téléphone</label>
+                    <input type="text" id="phone" name="phone" value="{{ user.numero_telephone }}" class="mt-1 block w-full border border-gray-300 rounded-lg p-2">
+                </div>
+                <div>
+                    <label for="profile_picture" class="block font-semibold text-gray-900">Photo de profil</label>
+                    <input type="file" id="profile_picture" name="profile_picture" class="mt-1 block w-full border border-gray-300 rounded-lg p-2">
+                </div>
+            </div>
+
+            <!-- Boutons pour fermer ou soumettre -->
+            <div class="flex justify-between mt-4">
+                <button type="button" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+                        onclick="document.getElementById('profileModal').classList.add('hidden');">
+                    Annuler
+                </button>
+                <button type="submit" class="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition">
+                    Mettre à jour
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
